@@ -1,5 +1,6 @@
 package fi.hsl.passengercount
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import fi.hsl.common.mqtt.proto.Mqtt
 import fi.hsl.common.pulsar.IMessageHandler
 import fi.hsl.common.pulsar.PulsarApplicationContext
@@ -12,12 +13,13 @@ import org.apache.pulsar.client.api.Consumer
 import org.apache.pulsar.client.api.Message
 import org.apache.pulsar.client.api.MessageId
 import java.io.File
+import java.nio.charset.Charset
 
 class MessageHandler(context: PulsarApplicationContext, private val path : File): IMessageHandler {
 
     private val log = KotlinLogging.logger {}
     private val consumer: Consumer<ByteArray> = context.consumer!!
-    private val FILE_NAME_PATTERN = "day_%s_vehicle_%s.csv"
+    private val FILE_NAME_PATTERN = "day_%s_vehicle_%s.json"
 
     override fun handleMessage(received: Message<Any>) {
         try {
@@ -48,7 +50,11 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
 
     internal fun writeToFile(apc : APC, bytes : ByteArray){
         val file : File = File(path, String.format(FILE_NAME_PATTERN, apc.oday,apc.veh.toString()))
+        val jsonString = String(bytes, Charset.defaultCharset()).replace("\r\n", "")
         if(!file.exists()) file.createNewFile()
-        file.writeBytes(bytes)
+        if(file.length()>0){
+            file.appendText("\n")
+        }
+        file.appendText(jsonString)
     }
 }

@@ -42,15 +42,17 @@ class MessageHandlerTest {
             on{consumer} doReturn (mockConsumer)
         }
 
-        val directory = File("testcsv")
+        val directory = File("testjson")
         directory.mkdir()
         val messageHandler = MessageHandler(mockContext, directory)
         val rawPayload = File("src/test/resources/sample.json").readBytes()
         val apc: APC = JsonHelper.parse(rawPayload)
         messageHandler.writeToFile(apc, rawPayload)
-        val file = File("testcsv", String.format("day_%s_vehicle_%s.csv", apc.oday,apc.veh.toString()))
+        val file = File("testjson", String.format("day_%s_vehicle_%s.json", apc.oday,apc.veh.toString()))
         assertTrue(file.exists())
-        assertEquals(File("src/test/resources/sample.json").readText(Charset.forName("UTF-8")),file.readText(Charset.forName("UTF-8")))
+        val expectedValue = File("src/test/resources/sample.json").readText(Charset.forName("UTF-8")).replace("\r\n", "")
+        val actualValue = file.readText(Charset.forName("UTF-8"))
+        assertEquals(expectedValue,actualValue)
         file.delete()
         directory.delete()
     }

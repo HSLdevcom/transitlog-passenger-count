@@ -15,15 +15,14 @@ import java.time.ZoneId
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-val PATH = "csv"
+val PATH = "json"
 
 fun main(vararg args: String) {
     val log = KotlinLogging.logger {}
     val config = ConfigParser.createConfig()
     val path : File = File(PATH)
     if(!path.exists()) path.mkdir()
-    val doiTimezone = ZoneId.of(config.getString("doi.timezone"))
-    val doiQueryFutureDays = config.getInt("doi.queryFutureDays")
+    val blobPath = config.getString("")
 
     val client = OkHttpClient()
     try {
@@ -32,18 +31,20 @@ fun main(vararg args: String) {
             val processor = MessageHandler(context, path)
             val healthServer = context.healthServer
             app.launchWithHandler(processor)
+            setupTaskToMoveFiles(context.config!!.getString("application.blobPath"),
+                context.config!!.getString("application.blobContainer"))
         }
     } catch (e: Exception) {
         log.error("Exception at main", e)
     }
-    setupTaskToMoveFiles()
+
 }
 
 /**
  * TODO: add blob configuration
  * Moves the files from the local storage to a shared azure blob
  */
-fun setupTaskToMoveFiles(){
+fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String){
     val scheduler = Executors.newScheduledThreadPool(1)
     val tomorrow = LocalDateTime.now().plusDays(1).withHour(3)
     val now = LocalDateTime.now()
@@ -51,7 +52,7 @@ fun setupTaskToMoveFiles(){
     scheduler.scheduleWithFixedDelay(Runnable {
         File(PATH).list()!!.forEach { it
             val file = File(PATH, it)
-            val azureBlobClient = AzureBlobClient("", "passenger-count-csv")
+            val azureBlobClient = AzureBlobClient(blobConnectionString, blobContainer)
             val uploader = AzureUploader(azureBlobClient)
             uploader.uploadBlob(file.absolutePath)
             file.delete()
