@@ -1,7 +1,5 @@
 package fi.hsl.passengercount
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import fi.hsl.common.config.ConfigParser
 import fi.hsl.common.pulsar.PulsarApplication
 import fi.hsl.passengercount.azure.AzureBlobClient
