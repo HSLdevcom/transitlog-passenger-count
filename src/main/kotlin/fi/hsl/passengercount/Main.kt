@@ -26,11 +26,11 @@ fun main(vararg args: String) {
     try {
         PulsarApplication.newInstance(config).use { app ->
             val context = app.context
-            val processor = MessageHandler(context, path)
+            val messageHandler = MessageHandler(context, path)
             val healthServer = context.healthServer
-            app.launchWithHandler(processor)
+            app.launchWithHandler(messageHandler)
             setupTaskToMoveFiles(context.config!!.getString("application.blobPath"),
-                context.config!!.getString("application.blobContainer"))
+                context.config!!.getString("application.blobContainer"), messageHandler)
         }
     } catch (e: Exception) {
         log.error("Exception at main", e)
@@ -42,7 +42,7 @@ fun main(vararg args: String) {
  * TODO: add blob configuration
  * Moves the files from the local storage to a shared azure blob
  */
-fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String){
+fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, messageHandler: MessageHandler){
     val scheduler = Executors.newScheduledThreadPool(1)
     val tomorrow = LocalDateTime.now().plusDays(1).withHour(3)
     val now = LocalDateTime.now()
@@ -55,6 +55,7 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String){
             uploader.uploadBlob(file.absolutePath)
             file.delete()
         }
+        messageHandler.ackMessages()
     }, initialDelay.toHours(), 24, TimeUnit.HOURS)
 
 }

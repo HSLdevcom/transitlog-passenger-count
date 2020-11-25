@@ -19,6 +19,7 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
     private val consumer: Consumer<ByteArray> = context.consumer!!
     private val FILE_NAME_PATTERN = "day_%s_vehicle_%s.json"
     private val parser = PassengerCountParser.newInstance()
+    lateinit var lastHandledMessage : MessageId
 
     override fun handleMessage(received: Message<Any>) {
         try {
@@ -32,14 +33,14 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
         } catch (e: Exception) {
             log.error("Exception while handling message", e)
         } finally {
-            ack(received.messageId) //Ack all messages
+            lastHandledMessage = received.messageId
         }
     }
 
-    private fun ack(received: MessageId) {
-        consumer.acknowledgeAsync(received)
+    public fun ackMessages() {
+        consumer.acknowledgeAsync(lastHandledMessage)
             .exceptionally { throwable ->
-                log.error("Failed to ack Pulsar message", throwable)
+                log.error("Failed to ack Pulsar messages", throwable)
                 null
             }
             .thenRun {}
