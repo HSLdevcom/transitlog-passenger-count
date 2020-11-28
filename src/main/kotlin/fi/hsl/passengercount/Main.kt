@@ -20,9 +20,7 @@ fun main(vararg args: String) {
     val config = ConfigParser.createConfig()
     val path : File = File(PATH)
     if(!path.exists()) path.mkdir()
-    val blobPath = config.getString("")
 
-    val client = OkHttpClient()
     try {
         PulsarApplication.newInstance(config).use { app ->
             val context = app.context
@@ -48,7 +46,7 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, 
     val now = LocalDateTime.now()
     val initialDelay = Duration.between(now, tomorrow)
     scheduler.scheduleWithFixedDelay(Runnable {
-        File(PATH).list()!!.forEach { it
+        File(PATH).list()!!.forEach {
             val file = File(PATH, it)
             val azureBlobClient = AzureBlobClient(blobConnectionString, blobContainer)
             val uploader = AzureUploader(azureBlobClient)

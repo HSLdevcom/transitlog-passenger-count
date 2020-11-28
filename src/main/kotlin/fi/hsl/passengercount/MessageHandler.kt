@@ -24,9 +24,6 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
     override fun handleMessage(received: Message<Any>) {
         try {
             if (TransitdataSchema.hasProtobufSchema(received, TransitdataProperties.ProtobufSchema.PassengerCount)) {
-                val timestamp: Long = received.eventTime
-                val data: ByteArray = received.data
-
                 val passengerCount = PassengerCount.Data.parseFrom(received.data)
                 writeToFile(passengerCount.payload)
             }
