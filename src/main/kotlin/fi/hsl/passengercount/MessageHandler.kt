@@ -1,6 +1,7 @@
 package fi.hsl.passengercount
 
 import fi.hsl.common.passengercount.PassengerCountParser
+import fi.hsl.common.passengercount.json.APCJson
 import fi.hsl.common.passengercount.proto.PassengerCount
 import fi.hsl.common.pulsar.IMessageHandler
 import fi.hsl.common.pulsar.PulsarApplicationContext
@@ -50,7 +51,7 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
         if(file.length()>0){
             file.appendText("\n")
         }
-        val fos = FileOutputStream(file)
+        val fos = FileOutputStream(file, true)
         parser.serializeJson(apcJson, fos)
         fos.close()
     }
