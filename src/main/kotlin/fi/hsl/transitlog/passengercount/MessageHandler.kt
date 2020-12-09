@@ -1,4 +1,4 @@
-package fi.hsl.passengercount
+package fi.hsl.transitlog.passengercount
 
 import fi.hsl.common.passengercount.PassengerCountParser
 import fi.hsl.common.passengercount.json.APCJson

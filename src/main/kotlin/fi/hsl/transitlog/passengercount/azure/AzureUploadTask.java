@@ -1,4 +1,4 @@
-package fi.hsl.passengercount.azure;
+package fi.hsl.transitlog.passengercount.azure;
 
 /**
  * Uploads file to blob on Azure

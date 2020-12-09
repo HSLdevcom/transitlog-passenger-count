@@ -1,15 +1,13 @@
-package fi.hsl.passengercount
+package fi.hsl.transitlog.passengercount
 
 import fi.hsl.common.config.ConfigParser
 import fi.hsl.common.pulsar.PulsarApplication
-import fi.hsl.passengercount.azure.AzureBlobClient
-import fi.hsl.passengercount.azure.AzureUploader
+import fi.hsl.transitlog.passengercount.azure.AzureBlobClient
+import fi.hsl.transitlog.passengercount.azure.AzureUploader
 import mu.KotlinLogging
-import okhttp3.OkHttpClient
 import java.io.File
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +26,7 @@ fun main(vararg args: String) {
             val healthServer = context.healthServer
             app.launchWithHandler(messageHandler)
             setupTaskToMoveFiles(context.config!!.getString("application.blobPath"),
-                context.config!!.getString("application.blobContainer"), messageHandler)
+                    context.config!!.getString("application.blobContainer"), messageHandler)
         }
     } catch (e: Exception) {
         log.error("Exception at main", e)

@@ -1,4 +1,4 @@
-package fi.hsl.passengercount.azure;
+package fi.hsl.transitlog.passengercount.azure;
 
 import com.azure.storage.blob.*;
 

@@ -1,4 +1,4 @@
-package fi.hsl.passengercount
+package fi.hsl.transitlog.passengercount
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
