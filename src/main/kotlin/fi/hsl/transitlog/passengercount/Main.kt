@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 val PATH = "json"
-
+private val log = KotlinLogging.logger {}
 fun main(vararg args: String) {
     val log = KotlinLogging.logger {}
     val config = ConfigParser.createConfig()
@@ -44,14 +44,22 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, 
     val now = LocalDateTime.now()
     val initialDelay = Duration.between(now, tomorrow)
     scheduler.scheduleWithFixedDelay(Runnable {
-        File(PATH).list()!!.forEach {
-            val file = File(PATH, it)
-            val azureBlobClient = AzureBlobClient(blobConnectionString, blobContainer)
-            val uploader = AzureUploader(azureBlobClient)
-            uploader.uploadBlob(file.absolutePath)
-            file.delete()
+        try{
+            log.info("Starting to move files to blob")
+            File(PATH).list()!!.forEach {
+                val file = File(PATH, it)
+                val azureBlobClient = AzureBlobClient(blobConnectionString, blobContainer)
+                val uploader = AzureUploader(azureBlobClient)
+                uploader.uploadBlob(file.absolutePath)
+                file.delete()
+            }
+            log.info("Done to move files to blob")
+            messageHandler.ackMessages()
+            log.info("Pulsar messages acknowledged")
         }
-        messageHandler.ackMessages()
+        catch(e : java.lang.Exception){
+            log.error("Something went wrong while moving the files to blob", e)
+        }
     }, initialDelay.toHours(), 24, TimeUnit.HOURS)
 
 }

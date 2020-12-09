@@ -21,12 +21,18 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
     private val FILE_NAME_PATTERN = "day_%s_vehicle_%s.json"
     private val parser = PassengerCountParser.newInstance()
     lateinit var lastHandledMessage : MessageId
+    private var handledMessages = 0
 
     override fun handleMessage(received: Message<Any>) {
         try {
             if (TransitdataSchema.hasProtobufSchema(received, TransitdataProperties.ProtobufSchema.PassengerCount)) {
                 val passengerCount = PassengerCount.Data.parseFrom(received.data)
                 writeToFile(passengerCount.payload)
+                handledMessages++
+                if(handledMessages == 1000){
+                    log.info("Handled 1000 messages, everything seems fine")
+                }
+
             }
         } catch (e: Exception) {
             log.error("Exception while handling message", e)
