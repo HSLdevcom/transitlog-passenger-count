@@ -1,24 +1,26 @@
 package fi.hsl.transitlog.passengercount.azure;
 
+import java.io.File;
+
 /**
  * Uploads file to blob on Azure
  */
 public class AzureUploadTask {
     private final AzureBlobClient blobClient;
-    private final String filePath;
+    private final File file;
 
-    AzureUploadTask(AzureBlobClient blobClient, String filePath) {
+    public AzureUploadTask(AzureBlobClient blobClient, File file) {
         this.blobClient = blobClient;
-        this.filePath = filePath;
+        this.file = file;
     }
 
     public AzureUploadTask run() {
         //log.info("Uploading dump from filepath: {}", filePath);
-        this.blobClient.uploadFromFile(filePath);
+        this.blobClient.uploadFromFile(file);
         return this;
     }
 
     public boolean isUploaded() {
-        return this.blobClient.fileExists(filePath);
+        return this.blobClient.fileExists(file.getAbsolutePath());
     }
 }

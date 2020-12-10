@@ -20,7 +20,7 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
     private val consumer: Consumer<ByteArray> = context.consumer!!
     private val FILE_NAME_PATTERN = "day_%s_vehicle_%s.json"
     private val parser = PassengerCountParser.newInstance()
-    lateinit var lastHandledMessage : MessageId
+    private var lastHandledMessage : MessageId? = null
     private var handledMessages = 0
 
     override fun handleMessage(received: Message<Any>) {
@@ -42,12 +42,14 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
     }
 
     public fun ackMessages() {
-        consumer.acknowledgeAsync(lastHandledMessage)
-            .exceptionally { throwable ->
-                log.error("Failed to ack Pulsar messages", throwable)
-                null
-            }
-            .thenRun {}
+        if(lastHandledMessage != null){
+            consumer.acknowledgeAsync(lastHandledMessage)
+                .exceptionally { throwable ->
+                    log.error("Failed to ack Pulsar messages", throwable)
+                    null
+                }
+                .thenRun {}
+        }
     }
 
     internal fun writeToFile(payload : PassengerCount.Payload){

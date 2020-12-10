@@ -1,6 +1,12 @@
 package fi.hsl.transitlog.passengercount.azure;
 
-import com.azure.storage.blob.*;
+
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+
+import java.io.File;
 
 /**
  * Azure blob client definition
@@ -19,9 +25,9 @@ public class AzureBlobClient {
 
     }
 
-    void uploadFromFile(String filePath) {
-        BlobClient blobClient = blobContainerClient.getBlobClient(filePath);
-        blobClient.uploadFromFile(filePath, true);
+    void uploadFromFile(File file) {
+        BlobClient blobClient = blobContainerClient.getBlobClient(file.getName());
+        blobClient.uploadFromFile(file.getAbsolutePath(), true);
 
     }
 

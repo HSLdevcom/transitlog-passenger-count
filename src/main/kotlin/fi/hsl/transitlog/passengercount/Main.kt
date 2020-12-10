@@ -4,6 +4,7 @@ import fi.hsl.common.config.ConfigParser
 import fi.hsl.common.pulsar.PulsarApplication
 import fi.hsl.transitlog.passengercount.azure.AzureBlobClient
 import fi.hsl.transitlog.passengercount.azure.AzureUploader
+
 import mu.KotlinLogging
 import java.io.File
 import java.time.Duration
@@ -24,9 +25,9 @@ fun main(vararg args: String) {
             val context = app.context
             val messageHandler = MessageHandler(context, path)
             val healthServer = context.healthServer
-            app.launchWithHandler(messageHandler)
-            setupTaskToMoveFiles(context.config!!.getString("application.blobPath"),
+            setupTaskToMoveFiles(context.config!!.getString("application.blobConnectionString"),
                     context.config!!.getString("application.blobContainer"), messageHandler)
+            app.launchWithHandler(messageHandler)
         }
     } catch (e: Exception) {
         log.error("Exception at main", e)
@@ -50,17 +51,17 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, 
                 val file = File(PATH, it)
                 val azureBlobClient = AzureBlobClient(blobConnectionString, blobContainer)
                 val uploader = AzureUploader(azureBlobClient)
-                uploader.uploadBlob(file.absolutePath)
+                uploader.uploadBlob(file)
                 file.delete()
             }
             log.info("Done to move files to blob")
             messageHandler.ackMessages()
             log.info("Pulsar messages acknowledged")
         }
-        catch(e : java.lang.Exception){
-            log.error("Something went wrong while moving the files to blob", e)
+        catch(t : Throwable){
+            log.error("Something went wrong while moving the files to blob", t)
         }
-    }, initialDelay.toHours(), 24, TimeUnit.HOURS)
+    }, 24, initialDelay.toHours(), TimeUnit.HOURS)
 
 }
 
