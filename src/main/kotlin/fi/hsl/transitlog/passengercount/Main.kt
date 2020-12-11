@@ -9,6 +9,7 @@ import mu.KotlinLogging
 import java.io.File
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -41,7 +42,7 @@ fun main(vararg args: String) {
  */
 fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, messageHandler: MessageHandler){
     val scheduler = Executors.newScheduledThreadPool(1)
-    val tomorrow = LocalDateTime.now().plusDays(1).withHour(3)
+    val tomorrow = LocalDateTime.now().plusDays(1).withHour(3).atZone(ZoneId.of("Europe/Helsinki"))
     val now = LocalDateTime.now()
     val initialDelay = Duration.between(now, tomorrow)
     scheduler.scheduleWithFixedDelay(Runnable {
@@ -61,7 +62,7 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, 
         catch(t : Throwable){
             log.error("Something went wrong while moving the files to blob", t)
         }
-    }, 0 /*initialDelay.toHours()*/ ,30 , TimeUnit.SECONDS)
+    }, initialDelay.toMinutes() ,24 * 60, TimeUnit.MINUTES)
 
 }
 
