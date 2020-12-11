@@ -61,7 +61,7 @@ fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, 
         catch(t : Throwable){
             log.error("Something went wrong while moving the files to blob", t)
         }
-    }, 24, initialDelay.toHours(), TimeUnit.HOURS)
+    }, 0 /*initialDelay.toHours()*/ ,24 , TimeUnit.HOURS)
 
 }
 
