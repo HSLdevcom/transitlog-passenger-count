@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit
 val PATH = "json"
 private val log = KotlinLogging.logger {}
 fun main(vararg args: String) {
-    val log = KotlinLogging.logger {}
     val config = ConfigParser.createConfig()
     val path : File = File(PATH)
     if(!path.exists()) path.mkdir()
