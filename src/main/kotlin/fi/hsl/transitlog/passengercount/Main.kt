@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-val PATH = "json"
+const val PATH = "json"
 private val log = KotlinLogging.logger {}
 fun main(vararg args: String) {
     val config = ConfigParser.createConfig()
@@ -36,7 +36,6 @@ fun main(vararg args: String) {
 }
 
 /**
- * TODO: add blob configuration
  * Moves the files from the local storage to a shared azure blob
  */
 fun setupTaskToMoveFiles(blobConnectionString : String, blobContainer : String, messageHandler: MessageHandler){

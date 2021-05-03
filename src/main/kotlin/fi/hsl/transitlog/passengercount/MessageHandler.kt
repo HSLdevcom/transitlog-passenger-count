@@ -29,15 +29,14 @@ class MessageHandler(context: PulsarApplicationContext, private val path : File)
                 val passengerCount = PassengerCount.Data.parseFrom(received.data)
                 writeToFile(passengerCount.payload)
                 handledMessages++
-                if(handledMessages == 1000){
-                    log.info("Handled 1000 messages, everything seems fine")
+                if(handledMessages == 100000){
+                    log.info("Handled 100000 messages, everything seems fine")
                 }
 
             }
+            lastHandledMessage = received.messageId
         } catch (e: Exception) {
             log.error("Exception while handling message", e)
-        } finally {
-            lastHandledMessage = received.messageId
         }
     }
 
