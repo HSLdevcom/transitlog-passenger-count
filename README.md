@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/HSLdevcom/transitlog-passenger-count.svg?branch=master)](https://travis-ci.org/HSLdevcom/Transitlog-passenger-count)
+[![Test and create Docker image](https://github.com/HSLdevcom/transitlog-passenger-count/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/HSLdevcom/transitlog-passenger-count/actions/workflows/test-and-build.yml)
 
 # Transitlog-passenger-count
 
