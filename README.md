@@ -1,6 +1,8 @@
+**REPLACED BY https://github.com/HSLdevcom/transitlog-apc-sink**
+
 [![Test and create Docker image](https://github.com/HSLdevcom/transitlog-passenger-count/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/HSLdevcom/transitlog-passenger-count/actions/workflows/test-and-build.yml)
 
-# Transitlog-passenger-count
+# ~~Transitlog-passenger-count~~
 
 ## Description
 
